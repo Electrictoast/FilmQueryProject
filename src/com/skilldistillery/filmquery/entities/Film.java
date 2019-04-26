@@ -1,19 +1,24 @@
 package com.skilldistillery.filmquery.entities;
 
+import java.sql.SQLException;
 import java.util.List;
+
+import com.skilldistillery.filmquery.database.DatabaseAccessor;
+import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
 
 public class Film {
 	private int id;
 	private String title;
 	private String description;
 	private int releaseYear;
-	private int languageId;
+	private String language;
 	private int rentalDuration;
 	private double rentalRate;
 	private int length;
 	private double replacementCost;
 	private String rating;
 	private String specialFeatures;
+	private List<Actor> cast;
 	public int getId() {
 		return id;
 	}
@@ -38,11 +43,11 @@ public class Film {
 	public void setReleaseYear(int releaseYear) {
 		this.releaseYear = releaseYear;
 	}
-	public int getLanguageId() {
-		return languageId;
+	public String getLanguageId() {
+		return language;
 	}
-	public void setLanguageId(int languageId) {
-		this.languageId = languageId;
+	public void setLanguageId(String languageId) {
+		this.language = languageId;
 	}
 	public int getRentalDuration() {
 		return rentalDuration;
@@ -80,13 +85,14 @@ public class Film {
 	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
-		result = prime * result + languageId;
+		result = prime * result + ((language == null) ? 0 : language.hashCode());
 		result = prime * result + length;
 		result = prime * result + ((rating == null) ? 0 : rating.hashCode());
 		result = prime * result + releaseYear;
@@ -116,7 +122,10 @@ public class Film {
 			return false;
 		if (id != other.id)
 			return false;
-		if (languageId != other.languageId)
+		if (language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!language.equals(other.language))
 			return false;
 		if (length != other.length)
 			return false;
@@ -147,24 +156,38 @@ public class Film {
 	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
-				+ ", languageId=" + languageId + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
-				+ ", length=" + length + ", replacementCost=" + replacementCost + ", rating=" + rating
-				+ ", specialFeatures=" + specialFeatures + "]";
+		return "id=" + id + "\ntitle=" + title + "\ndescription=" + description + "\nreleaseYear=" + releaseYear
+				+ "\nlanguageId=" + language + "\nrentalDuration=" + rentalDuration + "\nrentalRate=" + rentalRate
+				+ "\nlength=" + length + "\nreplacementCost=" + replacementCost + "\nrating=" + rating
+				+ "\nspecialFeatures=" + specialFeatures + "\ncast="+ cast;
 	}
-	public Film(int id, String title, String description, int releaseYear, int languageId, int rentalDuration,
-			double rentalRate, int length, double replacementCost, String rating, String specialFeatures) {
+	public Film(int id, String title, String description, int releaseYear, String languageId, int rentalDuration,
+			double rentalRate, int length, double replacementCost, String rating, String specialFeatures) throws SQLException {
 		super();
+		DatabaseAccessor db = new DatabaseAccessorObject();
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.releaseYear = releaseYear;
-		this.languageId = languageId;
+		this.language = languageId;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
 		this.length = length;
 		this.replacementCost = replacementCost;
 		this.rating = rating;
 		this.specialFeatures = specialFeatures;
+		this.cast = db.findActorsByFilmId(id);
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public List<Actor> getCast() {
+		return cast;
+	}
+	public void setCast(List<Actor> cast) {
+		this.cast = cast;
 	}
 }

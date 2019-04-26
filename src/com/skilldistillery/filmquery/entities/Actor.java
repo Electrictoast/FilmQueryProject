@@ -56,7 +56,7 @@ public class Actor {
 	}
 	@Override
 	public String toString() {
-		return "Actor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		return firstName +" "+ lastName;
 	}
 	public Actor(int id, String firstName, String lastName) {
 		super();
